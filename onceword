@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# (ↄ)2014 vanScheijen
+#---------------------
+# This program functions like cat but highlights all words that appear only once.
+#
+
+declare -A words
+
+if [[ ! -f "$1" ]]; then
+	echo "Usage: $0 <file>"
+	exit 1
+fi
+
+cat "$1" | {
+	while read -r line; do
+		strip=$(echo "$line" | sed 's/\\.//g' | tr "+-/(){}[]\"\`'" ' ' | sed -r 's/[^a-Z0-9 ]//g')
+		for word in $strip; do
+			((words[$word]++))
+		done
+	done
+	oncewords=`(for key in "${!words[@]}"; do echo "${words[$key]} $key"; done) | sort -n | grep "^1 .." | sed 's/^1 //' | tr '\n' '|'`
+	egrep --color -C100 "${oncewords}$0" "$1"
+}
+

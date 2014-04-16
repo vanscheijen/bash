@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# (ↄ)2013 vanScheijen
+#---------------------
+# Cat a file using the wadsworth method.
+#
+
+if [[ ! -f "$1" ]]; then
+	echo "Usage: $0 <file>"
+	exit 1
+fi
+
+lines=`wc -l "$1" | awk '{print $1}'`
+skip=`echo "$lines * .7" | bc`
+tail "-${skip%.*}" "$1"
+
